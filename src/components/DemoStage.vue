@@ -69,7 +69,7 @@ watch(activeDemo, () => {
 // Re-highlight when selected file changes
 watch(selectedFileIndex, highlight)
 
-const repo = 'patdev77-del/informatica-2026-demos'
+const repo = 'plippC/informatica-vue-2026-demos'
 function githubUrl(file) {
   return `https://github.com/${repo}/blob/main/${file}`
 }
