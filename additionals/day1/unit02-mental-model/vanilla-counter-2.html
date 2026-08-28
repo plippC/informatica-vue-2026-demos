@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <title>Vanilla JS counter</title>
+    <style>
+        body {
+            font-family: sans-serif;
+            padding: 2rem;
+        }
+
+        button {
+            font-size: 1.2rem;
+            padding: 0.5rem 1rem;
+            cursor: pointer;
+        }
+
+        .count {
+            font-size: 2rem;
+            margin: 1rem 0;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>Vanilla JS Counter</h1>
+    <p>Run in VS-Code Preview ...</p>
+
+    <p class="count">Count: <span id="display">0</span>*2 = <span id="doubled">0</span></p>
+    <button id="btn">+1</button>
+
+    <script>
+        let count = 0
+        const btn = document.querySelector('#btn')
+        const display = document.querySelector('#display')
+        const doubled = document.querySelector('#doubled')
+
+        btn.addEventListener('click', () => {
+            count++
+            display.textContent = count
+            doubled.textContent = count * 2
+        })
+    </script>
+</body>
+
+</html>
