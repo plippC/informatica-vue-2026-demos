@@ -10,6 +10,6 @@ const text2 = ref('')
   <p>You typed: {{ text }}</p>
 
   <h1>v-bind + event</h1>
-  <input v-bind="text2" placeholder="Type something…" @input="(e) => (text2 = e.target.value)" />
+  <input v-bind:value="text2" placeholder="Type something…" @input="(e) => (text2 = e.target.value)" />
   <p>You typed: {{ text2 }}</p>
 </template>
