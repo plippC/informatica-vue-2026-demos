@@ -7,7 +7,7 @@ const isActive = ref(false)
   <h1>Text-Content</h1>
   isActive = {{ isActive }} = {{ isActive ? 'active' : 'inactive' }}
   <h1>Attributes</h1>
-  <button :class="{ isActive }" @click="isActive = !isActive">Toggle</button>
+  <button v-bind:class="{ isActive }" @click="isActive = !isActive">Toggle</button>
 </template>
 
 <style scoped>
