@@ -16,6 +16,7 @@ import themeGithubLight from 'shiki/themes/github-light.mjs'
 
 const route = useRoute()
 const { theme } = useTheme()
+const codePaneOpen = ref(false)
 
 // Flatten all demos to easily look up the current one by path
 const allDemos = computed(() => [...day1Units.flatMap((u) => u.demos), ...day2Units.flatMap((u) => u.demos)])
@@ -83,19 +84,31 @@ function githubUrl(file) {
         <span class="file-icon">📄</span>
         <code>{{ activeDemo.title }}</code>
       </div>
-      <a :href="githubUrl(activeDemo.file)" target="_blank" rel="noopener" class="gh-btn">
-        <span>View on GitHub</span>
-        <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" width="14" height="14">
-          <path
-            d="M12 0C5.374 0 0 5.373 0 12c0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23A11.509 11.509 0 0112 5.803c1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576C20.566 21.797 24 17.3 24 12c0-6.627-5.373-12-12-12z" />
-        </svg>
-      </a>
+      <div class="stage-actions">
+        <button class="toggle-btn" @click="codePaneOpen = !codePaneOpen">
+          {{ codePaneOpen ? 'Hide code' : 'Show code' }}
+        </button>
+        <a :href="githubUrl(activeDemo.file)" target="_blank" rel="noopener" class="gh-btn">
+          <span>View on GitHub</span>
+          <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" width="14" height="14">
+            <path
+              d="M12 0C5.374 0 0 5.373 0 12c0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23A11.509 11.509 0 0112 5.803c1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576C20.566 21.797 24 17.3 24 12c0-6.627-5.373-12-12-12z" />
+          </svg>
+        </a>
+      </div>
     </header>
 
     <!-- Content Split (Fixed side-by-side) -->
-    <div class="stage-body">
+    <div :class="['stage-body', { 'code-hidden': !codePaneOpen }]">
+      <!-- Preview Column -->
+      <section class="pane preview-pane">
+        <div class="preview-card">
+          <component :is="activeDemo.component" />
+        </div>
+      </section>
+
       <!-- Code Column -->
-      <section class="pane code-pane">
+      <section v-if="codePaneOpen" class="pane code-pane">
         <!-- File tabs for multi-file demos -->
         <div v-if="sourceIsArray && sourceFiles.length > 1" class="file-tabs">
           <button v-for="(file, idx) in sourceFiles" :key="idx" :class="['tab', { active: selectedFileIndex === idx }]"
@@ -104,13 +117,6 @@ function githubUrl(file) {
           </button>
         </div>
         <pre v-html="highlightedCode" class="shiki-code" />
-      </section>
-
-      <!-- Preview Column -->
-      <section class="pane preview-pane">
-        <div class="preview-card">
-          <component :is="activeDemo.component" />
-        </div>
       </section>
     </div>
   </div>
@@ -138,6 +144,13 @@ function githubUrl(file) {
   align-items: center;
   border-bottom: 1px solid var(--border);
   padding-bottom: 1rem;
+  gap: 1rem;
+}
+
+.stage-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
 }
 
 .stage-title {
@@ -158,20 +171,42 @@ function githubUrl(file) {
   font-size: 1.2rem;
 }
 
+.toggle-btn,
 .gh-btn {
   display: inline-flex;
   align-items: center;
+  justify-content: center;
   gap: 0.5rem;
   padding: 0.5rem 1rem;
-  background: var(--accent);
-  color: #fff;
   border-radius: 8px;
-  text-decoration: none;
   font-weight: 600;
   font-size: 0.85rem;
   transition:
     opacity 0.2s,
     transform 0.1s;
+}
+
+.toggle-btn {
+  background: var(--bg);
+  color: var(--text-h);
+  border: 1px solid var(--border);
+  cursor: pointer;
+}
+
+.gh-btn {
+  background: var(--accent);
+  color: #fff;
+  text-decoration: none;
+}
+
+.toggle-btn:hover,
+.gh-btn:hover {
+  opacity: 0.9;
+}
+
+.toggle-btn:active,
+.gh-btn:active {
+  transform: scale(0.98);
 }
 
 .gh-btn:hover {
@@ -189,10 +224,14 @@ function githubUrl(file) {
 
 .stage-body {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 1.5rem;
   height: calc(100svh - 180px);
   min-height: 450px;
+}
+
+.stage-body.code-hidden {
+  grid-template-columns: 1fr;
 }
 
 .pane {
@@ -204,6 +243,7 @@ function githubUrl(file) {
   background: var(--bg);
   min-width: 0;
   min-height: 0;
+  width: 100%;
 }
 
 .code-pane {
@@ -212,7 +252,6 @@ function githubUrl(file) {
   padding: 0;
   display: flex;
   flex-direction: column;
-  width: 900px;
 }
 
 .file-tabs {

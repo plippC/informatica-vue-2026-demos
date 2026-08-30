@@ -6,6 +6,7 @@ import DemoStage from './components/DemoStage.vue'
 import ThemeToggle from './components/ThemeToggle.vue'
 
 const selectedDay = ref('day1')
+const sidebarOpen = ref(false)
 const units = {
   day1: day1Units,
   day2: day2Units
@@ -18,8 +19,17 @@ const dayLabels = {
 
 <template>
   <div id="app-root">
+    <button v-if="!sidebarOpen" class="sidebar-toggle sidebar-toggle--collapsed" @click="sidebarOpen = true"
+      aria-label="Show sidebar">
+      Show sidebar
+    </button>
+
     <!-- ── Sidebar ── -->
-    <nav id="main-nav">
+    <nav v-if="sidebarOpen" id="main-nav">
+      <button class="sidebar-toggle" @click="sidebarOpen = false" aria-label="Hide sidebar">
+        Hide sidebar
+      </button>
+
       <div class="nav-brand">
         <div>
           <div class="nav-brand-title">Vue 3</div>
@@ -30,12 +40,8 @@ const dayLabels = {
 
       <!-- Day Switcher -->
       <div class="day-switcher">
-        <button
-          v-for="day in ['day1', 'day2']"
-          :key="day"
-          :class="['day-btn', { active: selectedDay === day }]"
-          @click="selectedDay = day"
-        >
+        <button v-for="day in ['day1', 'day2']" :key="day" :class="['day-btn', { active: selectedDay === day }]"
+          @click="selectedDay = day">
           {{ dayLabels[day] }}
         </button>
       </div>
@@ -67,6 +73,25 @@ const dayLabels = {
 }
 
 /* ── Sidebar ── */
+.sidebar-toggle {
+  border: 1px solid var(--border);
+  background: var(--bg);
+  color: var(--text);
+  border-radius: 999px;
+  padding: 0.45rem 0.8rem;
+  font-size: 0.72rem;
+  font-weight: 600;
+  cursor: pointer;
+  align-self: flex-start;
+}
+
+.sidebar-toggle--collapsed {
+  position: fixed;
+  left: 1rem;
+  top: 1rem;
+  z-index: 20;
+}
+
 #main-nav {
   width: 260px;
   flex-shrink: 0;
@@ -210,6 +235,7 @@ const dayLabels = {
 
 /* ── Demo stage ── */
 #demo-view {
+  flex: 1;
   padding: 3rem 2.5rem;
 }
 </style>
