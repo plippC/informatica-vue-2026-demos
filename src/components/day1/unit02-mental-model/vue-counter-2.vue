@@ -1,6 +1,9 @@
 <script setup>
 import { ref } from 'vue'
 const count = ref(0)
+
+// 'unboxing' required
+console.log('Counter:', count.value)
 </script>
 
 <template>
